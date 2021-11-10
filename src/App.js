@@ -4,7 +4,7 @@ import Cart from './components/Cart/Cart';
 import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
 import Notification from './components/UI/Notification';
-import { sendCartData } from './store/cartRedux';
+import { sendCartData, fetchCartData } from './store/cartRedux';
 
 let isInitail = true;
 
@@ -15,7 +15,10 @@ function App() {
   const notification = useSelector(state => state.ui.notification)
 
   useEffect(() => {
+    dispatch(fetchCartData());
+  }, [])
 
+  useEffect(() => {
     if (isInitail) {
       isInitail = false;
       return;

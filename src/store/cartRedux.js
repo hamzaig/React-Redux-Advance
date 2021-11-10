@@ -8,6 +8,10 @@ const cartSlice = createSlice({
         totalQuantity: 0,
     },
     reducers: {
+        replaceCart(state, action) {
+            state.totalQuantity = action.payload.totalQuantity;
+            state.items = action.payload.items;
+        },
         addItemToCart(state, action) {
             state.totalQuantity++;
             const newItem = action.payload;
@@ -73,6 +77,29 @@ export const sendCartData = (cart) => {
                 message: "Sent Cart Data Successfully",
             }));
         } catch (err) {
+            dispatch(uiActions.showNotification({
+                status: "error",
+                title: "Error!",
+                message: "Sending Cart Data Failed",
+            }));
+        }
+    }
+}
+
+export const fetchCartData = () => {
+    return async dispatch => {
+        const fetchData = async () => {
+            const response = await fetch("https://react-http-c28cc-default-rtdb.firebaseio.com/cart.json");
+            if (!response.ok) {
+                throw Error("Something Went Wrong");
+            }
+            const data = await response.json();
+            return data;
+        }
+        try {
+            const data = await fetchData();
+            dispatch(cartSlice.actions.replaceCart(data));
+        } catch (error) {
             dispatch(uiActions.showNotification({
                 status: "error",
                 title: "Error!",
